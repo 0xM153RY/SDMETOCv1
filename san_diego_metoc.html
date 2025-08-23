@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Diego METOC - Maritime Operations Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            padding-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .weather-summary {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            text-align: center;
+        }
+
+        .temp-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin: 1rem 0;
+        }
+
+        .conditions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .condition-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+        }
+
+        .condition-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #60a5fa;
+        }
+
+        .condition-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .data-value {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .warning {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .alert-item {
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #fca5a5;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .traffic-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .traffic-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .vessel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .vessel-info h4 {
+            color: #60a5fa;
+            margin-bottom: 0.25rem;
+        }
+
+        .vessel-details {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .tides-chart {
+            height: 200px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tide-wave {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(59, 130, 246, 0.3) 25%, 
+                rgba(16, 185, 129, 0.3) 50%, 
+                rgba(59, 130, 246, 0.3) 75%, 
+                transparent 100%);
+            animation: wave 4s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateX(-50%) translateY(20px); }
+            50% { transform: translateX(-50%) translateY(-20px); }
+        }
+
+        .update-time {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .conditions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🌊</div>
+                <div>
+                    <div class="logo-text">San Diego METOC</div>
+                    <div style="font-size: 0.875rem; color: #94a3b8;">Maritime Operations Center</div>
+                </div>
+            </div>
+            <div class="status-indicators">
+                <div class="status-dot"></div>
+                <span style="font-size: 0.875rem; color: #94a3b8;">Systems Online</span>
+                <div style="margin-left: 1rem; font-size: 0.875rem; color: #94a3b8;" id="currentTime"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="content-grid">
+            <!-- Weather Conditions -->
+            <div class="card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-title">🌤️ Current Weather Conditions</div>
+                </div>
+                <div class="conditions-grid">
+                    <div class="condition-item">
+                        <div class="condition-value">72°F</div>
+                        <div class="condition-label">Temperature</div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-value">8 mph</div>
+                        <div class="condition-label">Wind Speed</div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-value">SW</div>
+                        <div class="condition-label">Wind Direction</div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-value">10 mi</div>
+                        <div class="condition-label">Visibility</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sea Conditions -->
+            <div class="card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-title">🌊 Sea State & Conditions</div>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Wave Height</span>
+                    <span class="data-value">2-3 ft</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Wave Period</span>
+                    <span class="data-value">8-10 sec</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Wave Direction</span>
+                    <span class="data-value">WSW</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Water Temperature</span>
+                    <span class="data-value">68°F</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Sea State</span>
+                    <span class="data-value" style="color: #10b981;">Moderate</span>
+                </div>
+            </div>
+
+            <!-- Tides Information -->
+            <div class="card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-title">🌙 Tide Information</div>
+                </div>
+                <div class="tides-chart">
+                    <div class="tide-wave"></div>
+                    <div style="position: relative; z-index: 10; text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #60a5fa;">Current: 4.2 ft</div>
+                        <div style="color: #94a3b8; margin-top: 0.5rem;">Rising</div>
+                    </div>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Next High Tide</span>
+                    <span class="data-value">2:45 PM - 5.8 ft</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Next Low Tide</span>
+                    <span class="data-value">8:15 PM - 1.2 ft</span>
+                </div>
+            </div>
+
+            <!-- Local Notices to Mariners -->
+            <div class="card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-title">📋 Local Notice to Mariners</div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-title">Navigation Warning - Point Loma</div>
+                    <div>Construction activities near Ballast Point. Mariners advised to maintain safe distance of 500 yards.</div>
+                    <div class="alert-time">Valid until: Aug 30, 2025</div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-title">Temporary Buoy Displacement</div>
+                    <div>Mission Bay Channel Marker #7 temporarily off station due to maintenance.</div>
+                    <div class="alert-time">Expected restoration: Aug 25, 2025</div>
+                </div>
+            </div>
+
+            <!-- Harbor Traffic -->
+            <div class="card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-title">🚢 Harbor Traffic</div>
+                </div>
+                <div class="traffic-item">
+                    <div class="vessel-indicator"></div>
+                    <div class="vessel-info">
+                        <h4>USS CARL VINSON (CVN-70)</h4>
+                        <div class="vessel-details">Aircraft Carrier • Inbound • ETA 16:30</div>
+                    </div>
+                </div>
+                <div class="traffic-item">
+                    <div class="vessel-indicator"></div>
+                    <div class="vessel-info">
+                        <h4>MAERSK DUBLIN</h4>
+                        <div class="vessel-details">Container Ship • At Berth • Pier 11</div>
+                    </div>
+                </div>
+                <div class="traffic-item">
+                    <div class="vessel-indicator"></div>
+                    <div class="vessel-info">
+                        <h4>CARNIVAL MIRACLE</h4>
+                        <div class="vessel-details">Cruise Ship • Outbound • Departed 14:15</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Port Operations -->
+            <div class="card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-title">⚓ Port Operations Status</div>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Port Condition</span>
+                    <span class="data-value" style="color: #10b981;">WHISKEY</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Harbor Pilot Available</span>
+                    <span class="data-value" style="color: #10b981;">Yes</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Tugboat Services</span>
+                    <span class="data-value" style="color: #10b981;">Available</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Anchorage Areas</span>
+                    <span class="data-value">Open</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Harbor Control</span>
+                    <span class="data-value">VHF Ch-12</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <!-- Weather Summary -->
+            <div class="weather-summary animate-fade-in">
+                <div style="font-size: 1.125rem; font-weight: 600; color: #94a3b8;">San Diego Bay</div>
+                <div class="temp-display">72°F</div>
+                <div style="color: #94a3b8; margin-bottom: 1rem;">Partly Cloudy</div>
+                <div class="conditions-grid" style="grid-template-columns: 1fr;">
+                    <div class="condition-item">
+                        <div class="condition-value">65%</div>
+                        <div class="condition-label">Humidity</div>
+                    </div>
+                    <div class="condition-item">
+                        <div class="condition-value">30.15"</div>
+                        <div class="condition-label">Barometric Pressure</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Alerts -->
+            <div class="card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-title">⚠️ Active Alerts</div>
+                </div>
+                <div class="alert-item" style="margin-bottom: 0.5rem;">
+                    <div class="alert-title">Small Craft Advisory</div>
+                    <div style="font-size: 0.875rem;">Winds 15-25 knots expected offshore</div>
+                    <div class="alert-time">Until: 6:00 AM tomorrow</div>
+                </div>
+            </div>
+
+            <!-- Communication Info -->
+            <div class="card animate-fade-in">
+                <div class="card-header">
+                    <div class="card-title">📻 Emergency Communications</div>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Coast Guard</span>
+                    <span class="data-value">VHF Ch-16</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Harbor Police</span>
+                    <span class="data-value">(619) 686-6500</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Port Control</span>
+                    <span class="data-value">VHF Ch-12</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Weather Radio</span>
+                    <span class="data-value">162.550 MHz</span>
+                </div>
+            </div>
+
+            <!-- Update Time -->
+            <div class="update-time">
+                Last Updated: <span id="lastUpdate"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour12: false,
+                timeZone: 'America/Los_Angeles'
+            });
+            document.getElementById('currentTime').textContent = timeString + ' PDT';
+            
+            const updateString = now.toLocaleString('en-US', {
+                timeZone: 'America/Los_Angeles',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            document.getElementById('lastUpdate').textContent = updateString;
+        }
+
+        // Initial time update
+        updateTime();
+        
+        // Update time every second
+        setInterval(updateTime, 1000);
+
+        // Add smooth scrolling and interaction effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+
+        // Simulate real-time data updates
+        setInterval(() => {
+            // Update wind speed with slight variation
+            const windElement = document.querySelector('.condition-value');
+            if (windElement && windElement.textContent.includes('mph')) {
+                const baseWind = 8;
+                const variation = (Math.random() - 0.5) * 4;
+                const newWind = Math.max(1, Math.round(baseWind + variation));
+                windElement.textContent = `${newWind} mph`;
+            }
+        }, 30000); // Update every 30 seconds
+    </script>
+</body>
+</html>
