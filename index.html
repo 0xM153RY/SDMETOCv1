@@ -125,7 +125,7 @@
 
         .card-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
             border-bottom: 1px solid rgba(59, 130, 246, 0.1);
@@ -210,63 +210,6 @@
             font-weight: 600;
         }
 
-        .warning {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-        }
-
-        .alert-item {
-            padding: 1rem;
-            background: rgba(239, 68, 68, 0.1);
-            border-left: 4px solid #ef4444;
-            margin-bottom: 1rem;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .alert-title {
-            font-weight: 600;
-            color: #fca5a5;
-            margin-bottom: 0.5rem;
-        }
-
-        .alert-time {
-            font-size: 0.75rem;
-            color: #94a3b8;
-        }
-
-        .traffic-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: rgba(15, 23, 42, 0.3);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .traffic-item:hover {
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .vessel-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #10b981;
-        }
-
-        .vessel-info h4 {
-            color: #60a5fa;
-            margin-bottom: 0.25rem;
-        }
-
-        .vessel-details {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
         .tides-chart {
             height: 200px;
             background: rgba(15, 23, 42, 0.3);
@@ -297,11 +240,86 @@
             50% { transform: translateX(-50%) translateY(-20px); }
         }
 
+        .traffic-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .vessel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .vessel-info h4 {
+            color: #60a5fa;
+            margin-bottom: 0.25rem;
+        }
+
+        .vessel-details {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .alert-item {
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #fca5a5;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
         .update-time {
             text-align: center;
             color: #64748b;
             font-size: 0.875rem;
             margin-top: 1rem;
+        }
+
+        .highlight-update {
+            background: rgba(59, 130, 246, 0.2) !important;
+            color: #60a5fa !important;
+            font-weight: bold !important;
+            padding: 2px 4px !important;
+            border-radius: 4px !important;
+            transition: all 0.5s ease !important;
+            border: 1px solid rgba(59, 130, 246, 0.4) !important;
+        }
+
+        .traffic-item.new-arrival {
+            border: 2px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            animation: newItemPulse 3s ease-in-out;
+        }
+
+        .alert-item.new-notice {
+            border-left: 4px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.15);
+            animation: newItemPulse 3s ease-in-out;
+        }
+
+        @keyframes newItemPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
 
         @media (max-width: 1200px) {
@@ -312,35 +330,6 @@
             
             .content-grid {
                 grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-container {
-                padding: 0 1rem;
-            }
-            
-            .conditions-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .card {
-                padding: 1rem;
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
             }
         }
     </style>
@@ -361,7 +350,8 @@
                 <div style="margin-left: 1rem; font-size: 0.875rem; color: #94a3b8;">
                     <span id="currentTime"></span>
                     <div style="margin-top: 4px; font-size: 0.75rem;">
-                        🔄 Auto-updating every 5min
+                        🔄 Auto-updating every 30sec
+                        <button onclick="testFunctions()" style="margin-left: 10px; padding: 2px 6px; font-size: 10px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">TEST NOW</button>
                     </div>
                 </div>
             </div>
@@ -371,229 +361,264 @@
     <div class="main-container">
         <div class="content-grid">
             <!-- Weather Conditions -->
-            <div class="card animate-fade-in">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-title">🌤️ Current Weather Conditions</div>
                 </div>
                 <div class="conditions-grid">
                     <div class="condition-item">
-                        <div class="condition-value">72°F</div>
+                        <div class="condition-value" id="temp-display">72°F</div>
                         <div class="condition-label">Temperature</div>
                     </div>
                     <div class="condition-item">
-                        <div class="condition-value">8 mph</div>
+                        <div class="condition-value" id="wind-speed">8 mph</div>
                         <div class="condition-label">Wind Speed</div>
                     </div>
                     <div class="condition-item">
-                        <div class="condition-value">SW</div>
+                        <div class="condition-value" id="wind-direction">SW</div>
                         <div class="condition-label">Wind Direction</div>
                     </div>
                     <div class="condition-item">
-                        <div class="condition-value">10 mi</div>
+                        <div class="condition-value" id="visibility">10 mi</div>
                         <div class="condition-label">Visibility</div>
                     </div>
                 </div>
             </div>
 
             <!-- Sea Conditions -->
-            <div class="card animate-fade-in">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-title">🌊 Sea State & Conditions</div>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Wave Height</span>
-                    <span class="data-value">2-3 ft</span>
+                    <span class="data-value" id="wave-height">2-3 ft</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Wave Period</span>
-                    <span class="data-value">8-10 sec</span>
+                    <span class="data-value" id="wave-period">8-10 sec</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Wave Direction</span>
-                    <span class="data-value">WSW</span>
+                    <span class="data-value" id="wave-direction">WSW</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Water Temperature</span>
-                    <span class="data-value">68°F</span>
+                    <span class="data-value" id="water-temp">68°F</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Sea State</span>
-                    <span class="data-value" style="color: #10b981;">Moderate</span>
+                    <span class="data-value" id="sea-state" style="color: #10b981;">Moderate</span>
                 </div>
             </div>
 
             <!-- Tides Information -->
-            <div class="card animate-fade-in">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-title">🌙 Tide Information</div>
                 </div>
                 <div class="tides-chart">
                     <div class="tide-wave"></div>
                     <div style="position: relative; z-index: 10; text-align: center;">
-                        <div style="font-size: 1.5rem; font-weight: 600; color: #60a5fa;">Current: 4.2 ft</div>
-                        <div style="color: #94a3b8; margin-top: 0.5rem;">Rising</div>
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #60a5fa;" id="current-tide">Current: 4.2 ft</div>
+                        <div style="color: #94a3b8; margin-top: 0.5rem;" id="tide-direction">Rising</div>
                     </div>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Next High Tide</span>
-                    <span class="data-value">2:45 PM - 5.8 ft</span>
+                    <span class="data-value" id="high-tide">1445 - 5.8 ft</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Next Low Tide</span>
-                    <span class="data-value">8:15 PM - 1.2 ft</span>
+                    <span class="data-value" id="low-tide">2015 - 1.2 ft</span>
+                </div>
+            </div>
+
+            <!-- Astronomical Data -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🌙 Astronomical Data</div>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Beginning of Nautical Twilight</span>
+                    <span class="data-value" id="twilight-begin">0542</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">End of Nautical Twilight</span>
+                    <span class="data-value" id="twilight-end">1918</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Illumination</span>
+                    <span class="data-value" id="moon-illumination">73%</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Moon Phase</span>
+                    <span class="data-value" id="moon-phase">Waxing Gibbous</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Night Vision Conditions</span>
+                    <span class="data-value" id="visibility-conditions" style="color: #10b981;">Good</span>
                 </div>
             </div>
 
             <!-- Local Notices to Mariners -->
-            <div class="card animate-fade-in">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-title">📋 Local Notice to Mariners</div>
                 </div>
-                <div class="alert-item">
-                    <div class="alert-title">Navigation Warning - Point Loma</div>
-                    <div>Construction activities near Ballast Point. Mariners advised to maintain safe distance of 500 yards.</div>
-                    <div class="alert-time">Valid until: Aug 30, 2025</div>
-                </div>
-                <div class="alert-item">
-                    <div class="alert-title">Temporary Buoy Displacement</div>
-                    <div>Mission Bay Channel Marker #7 temporarily off station due to maintenance.</div>
-                    <div class="alert-time">Expected restoration: Aug 25, 2025</div>
+                <div id="notices-container">
+                    <div class="alert-item">
+                        <div class="alert-title">Navigation Warning - Point Loma</div>
+                        <div>Construction activities near Ballast Point. Mariners advised to maintain safe distance of 500 yards.</div>
+                        <div class="alert-time">Valid until: Aug 30, 2025</div>
+                    </div>
+                    <div class="alert-item">
+                        <div class="alert-title">Temporary Buoy Displacement</div>
+                        <div>Mission Bay Channel Marker #7 temporarily off station due to maintenance.</div>
+                        <div class="alert-time">Expected restoration: Aug 25, 2025</div>
+                    </div>
                 </div>
             </div>
 
             <!-- Harbor Traffic -->
-            <div class="card animate-fade-in">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-title">🚢 Harbor Traffic</div>
                 </div>
-                <div class="traffic-item">
-                    <div class="vessel-indicator"></div>
-                    <div class="vessel-info">
-                        <h4>USS CARL VINSON (CVN-70)</h4>
-                        <div class="vessel-details">Aircraft Carrier • Inbound • ETA 16:30</div>
+                <div id="traffic-container">
+                    <div class="traffic-item">
+                        <div class="vessel-indicator" style="background-color: #3b82f6;"></div>
+                        <div class="vessel-info">
+                            <h4>USS CARL VINSON (CVN-70)</h4>
+                            <div class="vessel-details">Aircraft Carrier • Inbound • ETA <span id="eta-time">1630</span></div>
+                        </div>
                     </div>
-                </div>
-                <div class="traffic-item">
-                    <div class="vessel-indicator"></div>
-                    <div class="vessel-info">
-                        <h4>MAERSK DUBLIN</h4>
-                        <div class="vessel-details">Container Ship • At Berth • Pier 11</div>
+                    <div class="traffic-item">
+                        <div class="vessel-indicator"></div>
+                        <div class="vessel-info">
+                            <h4>MAERSK DUBLIN</h4>
+                            <div class="vessel-details">Container Ship • At Berth • Pier 11</div>
+                        </div>
                     </div>
-                </div>
-                <div class="traffic-item">
-                    <div class="vessel-indicator"></div>
-                    <div class="vessel-info">
-                        <h4>CARNIVAL MIRACLE</h4>
-                        <div class="vessel-details">Cruise Ship • Outbound • Departed 14:15</div>
+                    <div class="traffic-item">
+                        <div class="vessel-indicator" style="background-color: #f59e0b;"></div>
+                        <div class="vessel-info">
+                            <h4>CARNIVAL MIRACLE</h4>
+                            <div class="vessel-details">Cruise Ship • Outbound • Departed <span id="departure-time">1415</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Port Operations -->
-            <div class="card animate-fade-in">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-title">⚓ Port Operations Status</div>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Port Condition</span>
-                    <span class="data-value" style="color: #10b981;">WHISKEY</span>
+                    <span class="data-value" id="port-condition" style="color: #10b981;">WHISKEY</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Harbor Pilot Available</span>
-                    <span class="data-value" style="color: #10b981;">Yes</span>
+                    <span class="data-value" id="pilot-available" style="color: #10b981;">Yes</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Tugboat Services</span>
-                    <span class="data-value" style="color: #10b981;">Available</span>
+                    <span class="data-value" id="tugboat-services" style="color: #10b981;">Available</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Anchorage Areas</span>
-                    <span class="data-value">Open</span>
+                    <span class="data-value" id="anchorage-areas">Open</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">Harbor Control</span>
-                    <span class="data-value">VHF Ch-12</span>
+                    <span class="data-value" id="harbor-control">VHF Ch-12</span>
                 </div>
             </div>
         </div>
 
         <div class="sidebar">
             <!-- Weather Summary -->
-            <div class="weather-summary animate-fade-in">
+            <div class="weather-summary">
                 <div style="font-size: 1.125rem; font-weight: 600; color: #94a3b8;">San Diego Bay</div>
-                <div class="temp-display">72°F</div>
+                <div class="temp-display" id="main-temp">72°F</div>
                 <div style="color: #94a3b8; margin-bottom: 1rem;">Partly Cloudy</div>
                 <div class="conditions-grid" style="grid-template-columns: 1fr;">
                     <div class="condition-item">
-                        <div class="condition-value">65%</div>
+                        <div class="condition-value" id="humidity">65%</div>
                         <div class="condition-label">Humidity</div>
                     </div>
                     <div class="condition-item">
-                        <div class="condition-value">30.15"</div>
+                        <div class="condition-value" id="pressure">30.15"</div>
                         <div class="condition-label">Barometric Pressure</div>
                     </div>
                 </div>
             </div>
 
             <!-- Quick Alerts -->
-            <div class="card animate-fade-in">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-title">⚠️ Active Alerts</div>
                 </div>
                 <div class="alert-item" style="margin-bottom: 0.5rem;">
-                    <div class="alert-title">Small Craft Advisory</div>
-                    <div style="font-size: 0.875rem;">Winds 15-25 knots expected offshore</div>
-                    <div class="alert-time">Until: 6:00 AM tomorrow</div>
-                </div>
-            </div>
-
-            <!-- Communication Info -->
-            <div class="card animate-fade-in">
-                <div class="card-header">
-                    <div class="card-title">📻 Emergency Communications</div>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Coast Guard</span>
-                    <span class="data-value">VHF Ch-16</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Harbor Police</span>
-                    <span class="data-value">(619) 686-6500</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Port Control</span>
-                    <span class="data-value">VHF Ch-12</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Weather Radio</span>
-                    <span class="data-value">162.550 MHz</span>
+                    <div class="alert-title" id="active-alert-title">Small Craft Advisory</div>
+                    <div id="active-alert-desc" style="font-size: 0.875rem;">Winds 15-25 knots expected offshore</div>
+                    <div class="alert-time">Until: <span id="alert-until">0600</span> tomorrow</div>
                 </div>
             </div>
 
             <!-- Data Sources & Integration Status -->
-            <div class="card animate-fade-in">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-title">🔌 Live Data Sources</div>
                 </div>
-                <div class="data-row">
-                    <span class="data-label">NOAA Weather API</span>
-                    <span class="data-value" style="color: #10b981;">Connected ✓</span>
+                <div id="data-sources-container">
+                    <div class="data-row">
+                        <span class="data-label">NOAA Weather API</span>
+                        <span class="data-value" style="color: #10b981;">Connected ✓</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">USCG Notices</span>
+                        <span class="data-value" style="color: #10b981;">Active ✓</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Port Authority</span>
+                        <span class="data-value" style="color: #10b981;">Online ✓</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Tide Service</span>
+                        <span class="data-value" style="color: #10b981;">Synced ✓</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">AIS Vessel Track</span>
+                        <span class="data-value" style="color: #f59e0b;">Delayed ⚠️</span>
+                    </div>
                 </div>
-                <div class="data-row">
-                    <span class="data-label">USCG Notices</span>
-                    <span class="data-value" style="color: #10b981;">Active ✓</span>
+            </div>
+
+            <!-- Communication Info -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📻 Emergency Communications</div>
                 </div>
-                <div class="data-row">
-                    <span class="data-label">Port Authority</span>
-                    <span class="data-value" style="color: #10b981;">Online ✓</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Tide Service</span>
-                    <span class="data-value" style="color: #10b981;">Synced ✓</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">AIS Vessel Track</span>
-                    <span class="data-value" style="color: #f59e0b;">Delayed ⚠️</span>
+                <div id="emergency-comms-container">
+                    <div class="data-row">
+                        <span class="data-label">Coast Guard</span>
+                        <span class="data-value">VHF Ch-16</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Harbor Police</span>
+                        <span class="data-value">(619) 686-6500</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Port Control</span>
+                        <span class="data-value">VHF Ch-12</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Weather Radio</span>
+                        <span class="data-value">162.550 MHz</span>
+                    </div>
                 </div>
             </div>
 
@@ -605,314 +630,456 @@
     </div>
 
     <script>
+        console.log("🚀 METOC System Starting...");
+        
+        // Global variables for dynamic data
+        var activeNotices = [
+            {
+                id: 1,
+                title: 'Navigation Warning - Point Loma',
+                desc: 'Construction activities near Ballast Point. Mariners advised to maintain safe distance of 500 yards.',
+                until: 'Aug 30, 2025',
+                priority: 'high'
+            },
+            {
+                id: 2,
+                title: 'Temporary Buoy Displacement',
+                desc: 'Mission Bay Channel Marker #7 temporarily off station due to maintenance.',
+                until: 'Aug 25, 2025',
+                priority: 'medium'
+            }
+        ];
+        
+        var activeVessels = [
+            {
+                id: 'CVN70',
+                name: 'USS CARL VINSON (CVN-70)',
+                type: 'Aircraft Carrier',
+                status: 'Inbound',
+                detail: 'ETA 1630',
+                priority: 'high'
+            },
+            {
+                id: 'MAERSK01',
+                name: 'MAERSK DUBLIN',
+                type: 'Container Ship',
+                status: 'At Berth',
+                detail: 'Pier 11',
+                priority: 'medium'
+            },
+            {
+                id: 'CARNIVAL01',
+                name: 'CARNIVAL MIRACLE',
+                type: 'Cruise Ship',
+                status: 'Outbound',
+                detail: 'Departed 1415',
+                priority: 'medium'
+            }
+        ];
+        
+        // Weather data
+        var weatherData = {
+            temp: 72,
+            windSpeed: 8,
+            windDir: 'SW',
+            visibility: 10,
+            humidity: 65,
+            pressure: 30.15
+        };
+        
+        // Sea conditions data
+        var seaData = {
+            waveHeightMin: 2,
+            waveHeightMax: 3,
+            wavePeriodMin: 8,
+            wavePeriodMax: 10,
+            waveDir: 'WSW',
+            waterTemp: 68,
+            seaState: 'Moderate'
+        };
+        
+        // Port operations data
+        var portData = {
+            condition: 'WHISKEY',
+            pilotAvailable: true,
+            tugboatAvailable: true,
+            anchorage: 'Open',
+            harborControl: 'VHF Ch-12'
+        };
+        
         // Update current time
         function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', {
-                hour12: false,
-                timeZone: 'America/Los_Angeles'
-            });
-            document.getElementById('currentTime').textContent = timeString + ' PDT';
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
             
-            const updateString = now.toLocaleString('en-US', {
-                timeZone: 'America/Los_Angeles',
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
-            document.getElementById('lastUpdate').textContent = updateString;
+            var timeStr = (hours < 10 ? '0' : '') + hours + ':' + 
+                         (minutes < 10 ? '0' : '') + minutes + ':' +
+                         (seconds < 10 ? '0' : '') + seconds + ' PDT';
+            
+            var timeEl = document.getElementById('currentTime');
+            if (timeEl) {
+                timeEl.textContent = timeStr;
+            }
+            
+            var lastEl = document.getElementById('lastUpdate');
+            if (lastEl) {
+                lastEl.textContent = now.toLocaleString();
+            }
         }
-
-        // Initial time update
-        updateTime();
         
-        // Update time every second
-        setInterval(updateTime, 1000);
-
-        // Add smooth scrolling and interaction effects
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.card');
+        // Update weather data
+        function updateWeather() {
+            console.log("🌤️ Updating weather data...");
             
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
-                
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px) scale(1.02)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-        });
-
-        // Realistic METOC data simulation system
-        class MetocDataSimulator {
-            constructor() {
-                this.baseData = {
-                    temperature: 72,
-                    windSpeed: 8,
-                    windDir: 'SW',
-                    visibility: 10,
-                    waveHeight: '2-3',
-                    waterTemp: 68,
-                    currentTide: 4.2,
-                    pressure: 30.15,
-                    humidity: 65
-                };
-                this.trends = {
-                    temperature: 0.1,
-                    windSpeed: 0.3,
-                    pressure: 0.02,
-                    currentTide: 0.05
-                };
-                this.lastUpdate = Date.now();
-            }
-
-            // Simulate realistic weather patterns
-            updateWeatherData() {
-                const now = Date.now();
-                const timeDiff = (now - this.lastUpdate) / 1000; // seconds
-                
-                // Temperature follows diurnal pattern
-                const hour = new Date().getHours();
-                const tempVariation = Math.sin((hour - 6) * Math.PI / 12) * 5;
-                this.baseData.temperature = 70 + tempVariation + (Math.random() - 0.5) * 2;
-                
-                // Wind speed with realistic gusts
-                this.baseData.windSpeed = Math.max(2, 8 + (Math.random() - 0.5) * 6);
-                
-                // Pressure changes gradually
-                this.baseData.pressure += (Math.random() - 0.5) * 0.02;
-                this.baseData.pressure = Math.max(29.8, Math.min(30.5, this.baseData.pressure));
-                
-                // Tide simulation (simplified sinusoidal)
-                const tidePhase = (Date.now() / 1000 / 3600) % 12.5; // 12.5 hour cycle
-                this.baseData.currentTide = 3.5 + 2.3 * Math.sin(tidePhase * 2 * Math.PI / 12.5);
-                
-                this.lastUpdate = now;
-            }
-
-            // Simulate vessel traffic updates
-            generateVesselUpdate() {
-                const vessels = [
-                    { name: 'USS CARL VINSON (CVN-70)', type: 'Aircraft Carrier', status: 'Inbound' },
-                    { name: 'MAERSK DUBLIN', type: 'Container Ship', status: 'At Berth' },
-                    { name: 'CARNIVAL MIRACLE', type: 'Cruise Ship', status: 'Outbound' },
-                    { name: 'DOLE CALIFORNIA', type: 'Cargo Ship', status: 'Approaching' },
-                    { name: 'PRINCESS CORAL', type: 'Cruise Ship', status: 'At Anchor' }
+            // Update temperature
+            weatherData.temp = weatherData.temp + (Math.random() - 0.5) * 2;
+            weatherData.temp = Math.max(65, Math.min(85, weatherData.temp));
+            
+            // Update wind
+            weatherData.windSpeed = weatherData.windSpeed + (Math.random() - 0.5) * 3;
+            weatherData.windSpeed = Math.max(0, Math.min(25, weatherData.windSpeed));
+            
+            // Update other conditions
+            weatherData.humidity = weatherData.humidity + (Math.random() - 0.5) * 5;
+            weatherData.humidity = Math.max(40, Math.min(90, weatherData.humidity));
+            
+            weatherData.pressure = weatherData.pressure + (Math.random() - 0.5) * 0.05;
+            weatherData.pressure = Math.max(29.80, Math.min(30.50, weatherData.pressure));
+            
+            // Update visibility
+            weatherData.visibility = weatherData.visibility + (Math.random() - 0.5) * 3;
+            weatherData.visibility = Math.max(2, Math.min(15, weatherData.visibility));
+            
+            // Update DOM elements
+            updateElement('temp-display', Math.round(weatherData.temp) + '°F');
+            updateElement('main-temp', Math.round(weatherData.temp) + '°F');
+            updateElement('wind-speed', Math.round(weatherData.windSpeed) + ' mph');
+            updateElement('humidity', Math.round(weatherData.humidity) + '%');
+            updateElement('pressure', weatherData.pressure.toFixed(2) + '"');
+            updateElement('visibility', Math.round(weatherData.visibility) + ' mi');
+        }
+        
+        // Update sea conditions
+        function updateSeaConditions() {
+            console.log("🌊 Updating sea conditions...");
+            
+            // Update wave data
+            seaData.waveHeightMin = seaData.waveHeightMin + (Math.random() - 0.5) * 1;
+            seaData.waveHeightMin = Math.max(1, Math.min(8, seaData.waveHeightMin));
+            seaData.waveHeightMax = Math.max(seaData.waveHeightMin + 1, seaData.waveHeightMax + (Math.random() - 0.5) * 1);
+            seaData.waveHeightMax = Math.max(2, Math.min(12, seaData.waveHeightMax));
+            
+            seaData.wavePeriodMin = seaData.wavePeriodMin + (Math.random() - 0.5) * 2;
+            seaData.wavePeriodMin = Math.max(4, Math.min(15, seaData.wavePeriodMin));
+            seaData.wavePeriodMax = Math.max(seaData.wavePeriodMin + 1, seaData.wavePeriodMax + (Math.random() - 0.5) * 2);
+            
+            seaData.waterTemp = seaData.waterTemp + (Math.random() - 0.5) * 1;
+            seaData.waterTemp = Math.max(60, Math.min(75, seaData.waterTemp));
+            
+            // Update sea state based on wave height
+            var avgWave = (seaData.waveHeightMin + seaData.waveHeightMax) / 2;
+            if (avgWave < 2) seaData.seaState = 'Calm';
+            else if (avgWave < 4) seaData.seaState = 'Moderate';
+            else if (avgWave < 7) seaData.seaState = 'Rough';
+            else seaData.seaState = 'Very Rough';
+            
+            // Update DOM elements
+            updateElement('wave-height', Math.round(seaData.waveHeightMin) + '-' + Math.round(seaData.waveHeightMax) + ' ft');
+            updateElement('wave-period', Math.round(seaData.wavePeriodMin) + '-' + Math.round(seaData.wavePeriodMax) + ' sec');
+            updateElement('water-temp', Math.round(seaData.waterTemp) + '°F');
+            updateElement('sea-state', seaData.seaState);
+        }
+        
+        // Update tides
+        function updateTides() {
+            console.log("🌊 Updating tide data...");
+            
+            var highHour = 14 + Math.floor(Math.random() * 4);
+            var highMin = Math.floor(Math.random() * 60);
+            var lowHour = 20 + Math.floor(Math.random() * 4);
+            var lowMin = Math.floor(Math.random() * 60);
+            
+            var highTime = (highHour < 10 ? '0' : '') + highHour + (highMin < 10 ? '0' : '') + highMin;
+            var lowTime = (lowHour < 10 ? '0' : '') + lowHour + (lowMin < 10 ? '0' : '') + lowMin;
+            
+            var highHeight = (5.6 + Math.random() * 0.8).toFixed(1);
+            var lowHeight = (0.8 + Math.random() * 0.6).toFixed(1);
+            
+            updateElement('high-tide', highTime + ' - ' + highHeight + ' ft');
+            updateElement('low-tide', lowTime + ' - ' + lowHeight + ' ft');
+            
+            // Update current tide
+            var currentTide = (2.5 + Math.random() * 3.5).toFixed(1);
+            var tideDirection = Math.random() > 0.5 ? 'Rising ⬆️' : 'Falling ⬇️';
+            updateElement('current-tide', 'Current: ' + currentTide + ' ft');
+            updateElement('tide-direction', tideDirection);
+        }
+        
+        // Update astronomical data
+        function updateAstronomical() {
+            console.log("🌙 Updating astronomical data...");
+            
+            var beginHour = 5 + Math.floor(Math.random() * 2);
+            var beginMin = 30 + Math.floor(Math.random() * 30);
+            var endHour = 19 + Math.floor(Math.random() * 2);
+            var endMin = Math.floor(Math.random() * 60);
+            
+            var beginTime = (beginHour < 10 ? '0' : '') + beginHour + (beginMin < 10 ? '0' : '') + beginMin;
+            var endTime = (endHour < 10 ? '0' : '') + endHour + (endMin < 10 ? '0' : '') + endMin;
+            
+            var illumination = Math.round(50 + Math.random() * 50);
+            var phases = ['New Moon 🌑', 'Waxing Crescent 🌒', 'First Quarter 🌓', 'Waxing Gibbous 🌔', 'Full Moon 🌕'];
+            var phase = phases[Math.floor(Math.random() * phases.length)];
+            
+            var conditions = ['Excellent', 'Good', 'Fair', 'Poor'];
+            var condition = conditions[Math.floor(Math.random() * conditions.length)];
+            
+            updateElement('twilight-begin', beginTime);
+            updateElement('twilight-end', endTime);
+            updateElement('moon-illumination', illumination + '%');
+            updateElement('moon-phase', phase);
+            updateElement('visibility-conditions', condition);
+        }
+        
+        // Update port operations
+        function updatePortOps() {
+            console.log("⚓ Updating port operations...");
+            
+            var conditions = ['WHISKEY', 'X-RAY', 'YANKEE'];
+            var newCondition = conditions[Math.floor(Math.random() * conditions.length)];
+            
+            portData.condition = newCondition;
+            portData.pilotAvailable = Math.random() > 0.1;
+            portData.tugboatAvailable = Math.random() > 0.1;
+            
+            var anchorageStates = ['Open', 'Limited', 'Restricted'];
+            portData.anchorage = anchorageStates[Math.floor(Math.random() * anchorageStates.length)];
+            
+            updateElement('port-condition', portData.condition);
+            updateElement('pilot-available', portData.pilotAvailable ? 'Yes' : 'No');
+            updateElement('tugboat-services', portData.tugboatAvailable ? 'Available' : 'Limited');
+            updateElement('anchorage-areas', portData.anchorage);
+        }
+        
+        // Update active alerts
+        function updateActiveAlerts() {
+            console.log("⚠️ Updating active alerts...");
+            
+            var alertTypes = [
+                {title: 'Small Craft Advisory', desc: 'Winds 15-25 knots expected offshore'},
+                {title: 'Dense Fog Warning', desc: 'Visibility reduced to less than 1/4 mile'},
+                {title: 'High Surf Advisory', desc: 'Waves 4-6 feet with occasional 8 foot sets'},
+                {title: 'Gale Warning', desc: 'Sustained winds 25-35 knots expected'},
+                {title: 'Marine Weather Statement', desc: 'Thunderstorms possible with gusty winds'}
+            ];
+            
+            var alert = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+            updateElement('active-alert-title', alert.title);
+            updateElement('active-alert-desc', alert.desc);
+        }
+        
+        // Update mariner notices dynamically
+        function updateMarinerNotices() {
+            console.log("📋 Updating mariner notices...");
+            
+            // Add new notice occasionally
+            if (Math.random() > 0.7 && activeNotices.length < 4) {
+                var newNotices = [
+                    {title: 'Harbor Dredging Operations', desc: 'Channel deepening in progress near Pier 8. Expect delays.'},
+                    {title: 'Temporary Light Outage', desc: 'Coronado Bridge navigation light out of service.'},
+                    {title: 'Military Exercise Area', desc: 'Naval training operations today. Avoid designated areas.'},
+                    {title: 'Commercial Diving Operations', desc: 'Underwater work at Harbor Island. Maintain 100ft clearance.'}
                 ];
                 
-                return vessels[Math.floor(Math.random() * vessels.length)];
+                var newNotice = newNotices[Math.floor(Math.random() * newNotices.length)];
+                newNotice.id = Date.now();
+                newNotice.until = 'Aug ' + (25 + Math.floor(Math.random() * 10)) + ', 2025';
+                activeNotices.push(newNotice);
             }
-
-            // API Integration Examples (commented for demonstration)
-            /*
-            async fetchRealWeatherData() {
-                try {
-                    // NOAA Weather API example
-                    const response = await fetch('https://api.weather.gov/stations/KSAN/observations/latest');
-                    const data = await response.json();
-                    return {
-                        temperature: data.properties.temperature.value,
-                        windSpeed: data.properties.windSpeed.value,
-                        windDirection: data.properties.windDirection.value,
-                        visibility: data.properties.visibility.value
-                    };
-                } catch (error) {
-                    console.error('Weather API Error:', error);
-                }
+            
+            // Remove notice occasionally
+            if (Math.random() > 0.8 && activeNotices.length > 1) {
+                activeNotices.splice(Math.floor(Math.random() * activeNotices.length), 1);
             }
-
-            async fetchTideData() {
-                try {
-                    // NOAA Tides API example
-                    const response = await fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=predictions&datum=MLLW&units=english&time_zone=lst_ldt&format=json');
-                    const data = await response.json();
-                    return data.predictions;
-                } catch (error) {
-                    console.error('Tides API Error:', error);
-                }
-            }
-
-            async fetchMarinerNotices() {
-                try {
-                    // USCG Local Notice to Mariners API
-                    const response = await fetch('https://www.navcen.uscg.gov/lnm/');
-                    // Parse and extract relevant notices
-                } catch (error) {
-                    console.error('LNM API Error:', error);
-                }
-            }
-            */
+            
+            renderNotices();
         }
-
-        // Initialize the data simulator
-        const metocSim = new MetocDataSimulator();
-
-        // Real-time data update system
-        function updateDisplayData() {
-            metocSim.updateWeatherData();
-            
-            // Update main temperature display
-            const mainTempDisplay = document.querySelector('.temp-display');
-            if (mainTempDisplay) {
-                mainTempDisplay.textContent = Math.round(metocSim.baseData.temperature) + '°F';
-            }
-            
-            // Update weather conditions grid - use more specific selectors
-            const conditionsGrid = document.querySelector('.conditions-grid');
-            if (conditionsGrid) {
-                const conditionItems = conditionsGrid.querySelectorAll('.condition-value');
-                if (conditionItems.length >= 4) {
-                    conditionItems[0].textContent = Math.round(metocSim.baseData.temperature) + '°F'; // Temperature
-                    conditionItems[1].textContent = Math.round(metocSim.baseData.windSpeed) + ' mph'; // Wind Speed
-                    // Wind direction and visibility stay relatively static
-                }
-            }
-            
-            // Update sidebar humidity and pressure
-            const sidebarConditions = document.querySelector('.weather-summary .conditions-grid');
-            if (sidebarConditions) {
-                const sidebarItems = sidebarConditions.querySelectorAll('.condition-value');
-                if (sidebarItems.length >= 2) {
-                    // Update humidity with slight variation
-                    const newHumidity = Math.max(45, Math.min(85, metocSim.baseData.humidity + (Math.random() - 0.5) * 10));
-                    sidebarItems[0].textContent = Math.round(newHumidity) + '%';
-                    sidebarItems[1].textContent = metocSim.baseData.pressure.toFixed(2) + '"';
-                }
-            }
-            
-            // Update tide level with more specific selector
-            const tideDisplay = document.querySelector('.tides-chart > div[style*="position: relative"]');
-            if (tideDisplay) {
-                tideDisplay.innerHTML = `
-                    <div style="font-size: 1.5rem; font-weight: 600; color: #60a5fa;">
-                        Current: ${metocSim.baseData.currentTide.toFixed(1)} ft
-                    </div>
-                    <div style="color: #94a3b8; margin-top: 0.5rem;">
-                        ${metocSim.baseData.currentTide > 3.5 ? 'Rising' : 'Falling'}
-                    </div>
-                `;
-            }
-            
-            // Update water temperature in sea conditions
-            const seaConditionsCard = Array.from(document.querySelectorAll('.card')).find(card => 
-                card.querySelector('.card-title')?.textContent.includes('Sea State'));
-            if (seaConditionsCard) {
-                const waterTempRow = Array.from(seaConditionsCard.querySelectorAll('.data-row')).find(row =>
-                    row.querySelector('.data-label')?.textContent === 'Water Temperature');
-                if (waterTempRow) {
-                    const tempVariation = (Math.random() - 0.5) * 2;
-                    const newWaterTemp = Math.round(metocSim.baseData.waterTemp + tempVariation);
-                    waterTempRow.querySelector('.data-value').textContent = newWaterTemp + '°F';
-                }
-            }
-            
-            // Add visual indicator for data freshness
-            const statusText = document.querySelector('.status-indicators span');
-            if (statusText && statusText.textContent === 'Systems Online') {
-                statusText.textContent = 'Data Updated';
-                statusText.style.color = '#10b981';
-                setTimeout(() => {
-                    statusText.textContent = 'Systems Online';
-                    statusText.style.color = '#94a3b8';
-                }, 3000);
-            }
-            
-            // Add timestamp to show last update
-            console.log(`🔄 METOC Data Updated: ${new Date().toLocaleTimeString()} - Temp: ${Math.round(metocSim.baseData.temperature)}°F, Wind: ${Math.round(metocSim.baseData.windSpeed)}mph, Tide: ${metocSim.baseData.currentTide.toFixed(1)}ft`);
-        }
-
-        // Simulate vessel traffic updates
-        function updateVesselTraffic() {
-            const trafficContainer = document.querySelector('.traffic-item').parentNode;
-            const vessels = trafficContainer.querySelectorAll('.traffic-item');
-            
-            // Randomly update one vessel
-            const randomVessel = vessels[Math.floor(Math.random() * vessels.length)];
-            const vesselUpdate = metocSim.generateVesselUpdate();
-            
-            // Add update animation
-            randomVessel.style.background = 'rgba(59, 130, 246, 0.2)';
-            setTimeout(() => {
-                randomVessel.style.background = 'rgba(15, 23, 42, 0.3)';
-            }, 3000);
-        }
-
-        // Simulate weather alerts
-        function checkForWeatherAlerts() {
-            const alertsContainer = document.querySelector('[title*="Active Alerts"]').parentNode;
-            const windSpeed = metocSim.baseData.windSpeed;
-            
-            if (windSpeed > 15 && !alertsContainer.querySelector('[data-high-wind]')) {
-                const highWindAlert = document.createElement('div');
-                highWindAlert.className = 'alert-item';
-                highWindAlert.setAttribute('data-high-wind', 'true');
-                highWindAlert.style.marginBottom = '0.5rem';
-                highWindAlert.innerHTML = `
-                    <div class="alert-title">High Wind Warning</div>
-                    <div style="font-size: 0.875rem;">Sustained winds ${Math.round(windSpeed)} knots</div>
-                    <div class="alert-time">Issued: ${new Date().toLocaleTimeString()}</div>
-                `;
-                alertsContainer.appendChild(highWindAlert);
-            } else if (windSpeed <= 15) {
-                const existingAlert = alertsContainer.querySelector('[data-high-wind]');
-                if (existingAlert) {
-                    existingAlert.remove();
-                }
-            }
-        }
-
-        // Enhanced update intervals with visual feedback
-        updateDisplayData(); // Initial update
         
-        // More frequent updates for demonstration (every 15 seconds for visibility)
-        const updateInterval = setInterval(() => {
-            updateDisplayData();
-            checkForWeatherAlerts();
+        // Update vessel traffic dynamically
+        function updateVessels() {
+            console.log("🚢 Updating vessel traffic...");
             
-            // Flash the update indicator
-            const statusDot = document.querySelector('.status-dot');
+            // Update existing vessels
+            activeVessels.forEach(function(vessel) {
+                if (vessel.status === 'Inbound') {
+                    var hour = 14 + Math.floor(Math.random() * 6);
+                    var min = Math.floor(Math.random() * 60);
+                    vessel.detail = 'ETA ' + (hour < 10 ? '0' : '') + hour + (min < 10 ? '0' : '') + min;
+                } else if (vessel.status === 'Outbound') {
+                    var hour = 10 + Math.floor(Math.random() * 6);
+                    var min = Math.floor(Math.random() * 60);
+                    vessel.detail = 'Departed ' + (hour < 10 ? '0' : '') + hour + (min < 10 ? '0' : '') + min;
+                }
+            });
+            
+            // Change vessel status occasionally
+            if (Math.random() > 0.8) {
+                var vessel = activeVessels[Math.floor(Math.random() * activeVessels.length)];
+                if (vessel.status === 'Inbound') {
+                    vessel.status = 'At Berth';
+                    var piers = ['Pier 8', 'Pier 11', 'Pier 14', 'Harbor Island'];
+                    vessel.detail = piers[Math.floor(Math.random() * piers.length)];
+                } else if (vessel.status === 'At Berth' && Math.random() > 0.5) {
+                    vessel.status = 'Outbound';
+                    var hour = 12 + Math.floor(Math.random() * 6);
+                    var min = Math.floor(Math.random() * 60);
+                    vessel.detail = 'Departed ' + (hour < 10 ? '0' : '') + hour + (min < 10 ? '0' : '') + min;
+                }
+            }
+            
+            // Add new vessel occasionally
+            if (Math.random() > 0.8 && activeVessels.length < 5) {
+                var newVessels = [
+                    {name: 'USS ESSEX (LHD-2)', type: 'Amphibious Assault Ship', status: 'Inbound', priority: 'high'},
+                    {name: 'MAERSK COPENHAGEN', type: 'Container Ship', status: 'Inbound', priority: 'medium'},
+                    {name: 'CARNIVAL INSPIRATION', type: 'Cruise Ship', status: 'At Berth', priority: 'medium'},
+                    {name: 'SCRIPPS RESEARCH', type: 'Research Vessel', status: 'Inbound', priority: 'low'}
+                ];
+                
+                var newVessel = newVessels[Math.floor(Math.random() * newVessels.length)];
+                newVessel.id = 'V' + Date.now();
+                
+                if (newVessel.status === 'Inbound') {
+                    var hour = 12 + Math.floor(Math.random() * 8);
+                    var min = Math.floor(Math.random() * 60);
+                    newVessel.detail = 'ETA ' + (hour < 10 ? '0' : '') + hour + (min < 10 ? '0' : '') + min;
+                } else {
+                    var piers = ['Pier 8', 'Pier 11', 'Pier 14', 'Harbor Island'];
+                    newVessel.detail = piers[Math.floor(Math.random() * piers.length)];
+                }
+                
+                activeVessels.push(newVessel);
+            }
+            
+            renderVessels();
+        }
+        
+        // Helper function to update element with highlighting
+        function updateElement(id, value) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.textContent = value;
+                el.classList.add('highlight-update');
+                setTimeout(function() {
+                    el.classList.remove('highlight-update');
+                }, 2000);
+            }
+        }
+        
+        // Render mariner notices
+        function renderNotices() {
+            var container = document.getElementById('notices-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            activeNotices.forEach(function(notice) {
+                var alertDiv = document.createElement('div');
+                alertDiv.className = 'alert-item';
+                alertDiv.innerHTML = '<div class="alert-title">' + notice.title + '</div>' +
+                                   '<div>' + notice.desc + '</div>' +
+                                   '<div class="alert-time">Valid until: ' + notice.until + '</div>';
+                container.appendChild(alertDiv);
+            });
+        }
+        
+        // Render vessel traffic
+        function renderVessels() {
+            var container = document.getElementById('traffic-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            activeVessels.forEach(function(vessel) {
+                var trafficDiv = document.createElement('div');
+                trafficDiv.className = 'traffic-item';
+                
+                var indicatorColor = '#10b981';
+                if (vessel.status === 'Inbound') indicatorColor = '#3b82f6';
+                else if (vessel.status === 'Outbound') indicatorColor = '#f59e0b';
+                
+                trafficDiv.innerHTML = '<div class="vessel-indicator" style="background-color: ' + indicatorColor + ';"></div>' +
+                                      '<div class="vessel-info">' +
+                                          '<h4>' + vessel.name + '</h4>' +
+                                          '<div class="vessel-details">' + vessel.type + ' • ' + vessel.status + ' • ' + vessel.detail + '</div>' +
+                                      '</div>';
+                container.appendChild(trafficDiv);
+            });
+        }
+        
+        // Main update function
+        function updateAll() {
+            console.log("🔄 METOC system update cycle...");
+            
+            updateTime();
+            
+            if (Math.random() > 0.3) updateWeather();
+            if (Math.random() > 0.4) updateSeaConditions();
+            if (Math.random() > 0.4) updateTides();
+            if (Math.random() > 0.5) updateAstronomical();
+            if (Math.random() > 0.5) updatePortOps();
+            if (Math.random() > 0.5) updateActiveAlerts();
+            if (Math.random() > 0.6) updateMarinerNotices();
+            if (Math.random() > 0.6) updateVessels();
+            
+            // Flash status indicator
+            var statusDot = document.querySelector('.status-dot');
             if (statusDot) {
-                statusDot.style.background = '#f59e0b';
-                setTimeout(() => {
+                statusDot.style.background = '#3b82f6';
+                setTimeout(function() {
                     statusDot.style.background = '#10b981';
-                }, 1000);
+                }, 1500);
             }
-        }, 15000);
-        
-        // Vessel traffic updates every minute for demo
-        setInterval(updateVesselTraffic, 60000);
-        
-        // Alert checks every 30 seconds
-        setInterval(checkForWeatherAlerts, 30000);
-
-        // WebSocket simulation for real-time updates
-        function simulateWebSocketConnection() {
-            console.log('🔌 WebSocket connection established to METOC data servers');
-            console.log('📡 Receiving real-time updates from:');
-            console.log('   • NOAA Weather Service API');
-            console.log('   • USCG Notice to Mariners');
-            console.log('   • Port Authority Traffic Control');
-            console.log('   • Tide/Current Prediction Service');
-            
-            // Simulate occasional connection status messages
-            setInterval(() => {
-                const messages = [
-                    '📊 Weather data synchronized',
-                    '🚢 Vessel positions updated',
-                    '🌊 Tide predictions refreshed',
-                    '📋 Notice to Mariners checked'
-                ];
-                console.log(messages[Math.floor(Math.random() * messages.length)]);
-            }, 45000);
         }
-
-        // Initialize simulated connections
-        setTimeout(simulateWebSocketConnection, 2000);
+        
+        // Test function
+        function testFunctions() {
+            console.log("🧪 Testing all systems...");
+            
+            updateWeather();
+            updateSeaConditions();
+            updateTides();
+            updateAstronomical();
+            updatePortOps();
+            updateActiveAlerts();
+            updateMarinerNotices();
+            updateVessels();
+            
+            console.log("✅ All systems tested successfully!");
+        }
+        
+        // Make testFunctions globally accessible
+        window.testFunctions = testFunctions;
+        
+        // Initialize system
+        console.log("📡 Initializing METOC system...");
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Initial update after 2 seconds
+        setTimeout(function() {
+            updateAll();
+        }, 2000);
+        
+        // Set up automatic updates every 30 seconds
+        setInterval(function() {
+            updateAll();
+        }, 30000);
+        
+        console.log("✅ METOC System fully operational!");
     </script>
 </body>
 </html>
